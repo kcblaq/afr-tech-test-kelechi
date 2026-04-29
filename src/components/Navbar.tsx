@@ -7,11 +7,13 @@ import { Input } from "@/components/ui/input";
 import { RiCodeLine, RiSearchLine } from "@remixicon/react";
 import { useContacts } from "@/context/ContactContext";
 import { Switch } from "./ui/switch";
+import { usePathname } from "next/navigation";
 
 
 export function Navbar() {
   const { searchQuery, setSearchQuery } = useContacts();
   const [theme, setTheme] = useState("luma");
+  const pathname = usePathname();
 
   useEffect(() => {
     const saved = localStorage.getItem("app-theme") || "luma";
@@ -41,7 +43,7 @@ export function Navbar() {
           <Link href="/add-contacts" className="transition-colors hover:text-primary">Add Contacts</Link>
         </nav>
         <div className="flex items-center gap-4">
-          <div className="relative hidden md:block w-48 lg:w-64">
+          {pathname === "/manage-contacts" && <div className="relative hidden md:block w-48 lg:w-64">
             <RiSearchLine className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
             <Input
               type="search"
@@ -50,7 +52,7 @@ export function Navbar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </div>
+          </div>}
           <div className="flex items-center gap-2" title="Toggle Theme (Maia/Luma)">
             <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{theme}</span>
             <Switch checked={theme === "maia"} onCheckedChange={toggleTheme} />
