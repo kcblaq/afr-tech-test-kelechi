@@ -1,13 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RiCodeLine, RiSearchLine } from "@remixicon/react";
 import { useContacts } from "@/context/ContactContext";
+import { Switch } from "./ui/switch";
+
 
 export function Navbar() {
   const { searchQuery, setSearchQuery } = useContacts();
+  const [theme, setTheme] = useState("luma");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("app-theme") || "luma";
+    setTheme(saved);
+    document.documentElement.setAttribute("data-theme", saved);
+  }, []);
+
+  const toggleTheme = (checked: boolean) => {
+    const newTheme = checked ? "maia" : "luma";
+    setTheme(newTheme);
+    localStorage.setItem("app-theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -16,14 +33,12 @@ export function Navbar() {
           <div className="size-8 rounded-full bg-primary flex items-center justify-center">
             <RiCodeLine className="text-primary-foreground size-5" />
           </div>
-          <span className="font-heading font-bold text-xl tracking-tight">TechLuma</span>
+          <Link href="/" className="font-heading font-bold text-xl tracking-tight">TechLuma</Link>
         </div>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           <Link href="/" className="transition-colors hover:text-primary">Home</Link>
-          <Link href="/about" className="transition-colors hover:text-primary">About</Link>
-          <Link href="/register" className="transition-colors hover:text-primary">Register</Link>
-          <Link href="/contact" className="transition-colors hover:text-primary">Contact</Link>
-          <Link href="/dashboard" className="transition-colors hover:text-primary">Dashboard</Link>
+          <Link href="/manage-contacts" className="transition-colors hover:text-primary">Manage Contacts</Link>
+          <Link href="/add-contacts" className="transition-colors hover:text-primary">Add Contacts</Link>
         </nav>
         <div className="flex items-center gap-4">
           <div className="relative hidden md:block w-48 lg:w-64">
@@ -35,6 +50,10 @@ export function Navbar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+          <div className="flex items-center gap-2" title="Toggle Theme (Maia/Luma)">
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{theme}</span>
+            <Switch checked={theme === "maia"} onCheckedChange={toggleTheme} />
           </div>
         </div>
       </div>
